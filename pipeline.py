@@ -90,8 +90,11 @@ def render(code: str, run_dir: Path) -> Path:
 
 
 def main():
-    prompt = input("Animation prompt: ")
-
+    # 1. Open and read your instructions directly from your local text file
+    with open("prompt.txt", "r", encoding="utf-8") as f:
+        prompt = f.read().strip()
+    
+    # 2. Let the script run immediately using that text file string
     run_id = str(int(time.time()))
     base_dir = Path(__file__).parent / "runs" / run_id
 
@@ -111,7 +114,7 @@ def main():
     # Kept between iterations so the evaluator can judge improvement.
     previous_result = None
 
-    for attempt in range(3):
+    for attempt in range(5):
 
         print(f"\n=== ATTEMPT {attempt + 1} ===")
         print(code)
@@ -144,19 +147,18 @@ Manim error:
 
 Fix the code.
 
-IMPORTANT:
-- The error comes from YOUR code, not from Manim itself.
-- Find the line of YOUR code named in the traceback (scene.py line N)
-  and delete it or rewrite it using simpler APIs.
-- Do NOT repeat your previous answer unchanged.
-- Do NOT use FRAME_WIDTH.
-- Do NOT use FRAME_HEIGHT.
-- Do NOT use MoveToTarget unless you explicitly create a target with generate_target().
-- Use simple, well-known Manim APIs.
-- For horizontal movement, use self.play(circle.animate.shift(RIGHT * 5)).
-- Return ONLY complete Python code.
-- The class MUST be named GeneratedScene.
+IMPORTANT RULES & DOCUMENTATION CONTRACTS:
+- Your previous code threw an error because you are utilizing API methods that do not exist.
+- Refer strictly to the Manim Community Module Index (https://docs.manim.community/en/stable/reference.html) for class specifications.
+- Check the official Mobject standards at: https://docs.manim.community/en/stable/reference/manim.scene.scene.Scene.html
+- You CANNOT use `self.camera.move_to` or animate the default Camera object.
+- To use an animatable camera, change the class inheritance definition to: `class GeneratedScene(MovingCameraScene):` 
+  and manipulate the view using `self.play(self.camera.frame.animate.move_to(target))`.
+- For standard animations, use standard constructors listed under: https://docs.manim.community/en/stable/reference/manim.animation.animation.Animation.html
+- Never use non-existent colors. Use basic strings like "#00FFFF" or native constants like BLUE, WHITE, RED.
+- Return ONLY the absolute clean, complete Python code wrapped inside Markdown python codeblocks.
 """
+
             print("\n[REPAIR] Asking coder to fix the error...")
 
             code = clean_code(
