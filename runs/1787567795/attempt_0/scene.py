@@ -1,0 +1,1 @@
+It seems like you're trying to create a PowerShell script to generate a scene using Manim Community Edition. However, I need more information about what specific scene you want to create. Could you please provide more details or specify what kind of scene you're looking to generate?
