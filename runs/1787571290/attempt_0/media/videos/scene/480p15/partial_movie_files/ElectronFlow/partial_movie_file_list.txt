@@ -1,5 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/capston_proto/runs/1787571290/attempt_0/media/videos/scene/480p15/partial_movie_files/ElectronFlow/793938918_3842704017_223132457.mp4'
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/capston_proto/runs/1787571290/attempt_0/media/videos/scene/480p15/partial_movie_files/ElectronFlow/2791924351_314113072_1759168477.mp4'
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/capston_proto/runs/1787571290/attempt_0/media/videos/scene/480p15/partial_movie_files/ElectronFlow/2791924351_872991795_3283346612.mp4'
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/capston_proto/runs/1787571290/attempt_0/media/videos/scene/480p15/partial_movie_files/ElectronFlow/2791924351_3515533520_1013900937.mp4'

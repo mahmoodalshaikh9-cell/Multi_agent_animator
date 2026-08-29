@@ -1,0 +1,8 @@
+secrets.toml
+.secrets.toml
+*.pyc
+runs/
+__pycache__/
+media/
+baseline_runs/
+*.mp4

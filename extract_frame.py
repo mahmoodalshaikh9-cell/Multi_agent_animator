@@ -2,7 +2,7 @@ from pathlib import Path
 import cv2
 
 
-def extract_frames(video: Path, output_dir: Path, count=5):
+def extract_frames(video: Path, output_dir: Path, count=10):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     cap = cv2.VideoCapture(str(video))

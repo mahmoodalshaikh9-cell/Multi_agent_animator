@@ -1,1 +1,0 @@
-It seems like you've provided a string that starts with `$prompt = @"`, which is a PowerShell syntax for defining a multi-line string. However, I'm not sure what you're asking for or what you want to achieve with this string. Could you please provide more context or clarify what you're trying to accomplish?

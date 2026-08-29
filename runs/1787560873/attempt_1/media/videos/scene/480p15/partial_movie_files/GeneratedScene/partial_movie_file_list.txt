@@ -1,4 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/CV_animation_testing/ollama/runs/1787560873/attempt_1/media/videos/scene/480p15/partial_movie_files/GeneratedScene/1584795214_2399007513_223132457.mp4'
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/CV_animation_testing/ollama/runs/1787560873/attempt_1/media/videos/scene/480p15/partial_movie_files/GeneratedScene/4072820271_3306966987_3481380946.mp4'
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/CV_animation_testing/ollama/runs/1787560873/attempt_1/media/videos/scene/480p15/partial_movie_files/GeneratedScene/4072820271_667144672_3468099488.mp4'

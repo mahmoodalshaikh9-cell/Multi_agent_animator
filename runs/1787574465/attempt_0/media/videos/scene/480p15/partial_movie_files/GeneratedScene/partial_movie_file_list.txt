@@ -1,3 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/capston_proto/runs/1787574465/attempt_0/media/videos/scene/480p15/partial_movie_files/GeneratedScene/793938918_2868845646_2443146848.mp4'
-file 'file:C:/Users/mahmo/OneDrive/Documents/GitHub/capston_proto/runs/1787574465/attempt_0/media/videos/scene/480p15/partial_movie_files/GeneratedScene/2791924351_1213844298_386707502.mp4'

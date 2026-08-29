@@ -1,1 +1,0 @@
-It looks like you're trying to create a PowerShell script, but the prompt is incomplete. Could you please provide more details or clarify what you're trying to achieve with the PowerShell script?

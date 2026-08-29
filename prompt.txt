@@ -1,1 +1,1 @@
-Cinematic, 3D abstract visualization of an atom's electrons. The camera slowly orbits a central atomic nucleus. Bright neon-blue glowing spheres represent electrons, seamlessly flowing and racing along looping, intertwined orbital pathways. The background is a fluid, continuous liquid gradient of shifting colors that slowly morph and bleed into one another. Dynamic lighting, motion blur on the fast-moving blue spheres, high shutter speed, photorealistic particle physics, 8k resolution, smooth 60fps animation.
+explain how streamlit compiles python into UI
