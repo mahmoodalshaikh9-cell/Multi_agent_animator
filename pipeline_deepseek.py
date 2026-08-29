@@ -6,12 +6,13 @@ from openai import APIConnectionError, APITimeoutError, InternalServerError, Ope
 
 import ast
 import json
-import os
 import subprocess
 import sys
 import time
-import toml
 import shutil
+
+import secrets_loader
+
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
@@ -19,11 +20,7 @@ NIM_BASE_URL = "https://integrate.api.nvidia.com/v1"
 openrouter_BASE_URL = "https://openrouter.ai/api/v1"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 
-_secrets = toml.load(Path(__file__).parent / "secrets.toml")
-DEEPSEEK_API_KEY = os.environ.get(
-    "DEEPSEEK_API_KEY",
-    _secrets.get("deepseek", ""),
-)
+DEEPSEEK_API_KEY = secrets_loader.get("deepseek", "DEEPSEEK_API_KEY")
 
 REQUEST_TIMEOUT = 60
 RENDER_TIMEOUT = 120

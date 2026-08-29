@@ -6,16 +6,16 @@ import json
 import re
 import requests
 import manim
-import toml
-from pathlib import Path
+
+import secrets_loader
+
 with open("manim_guidelines.md", "r", encoding="utf-8") as file:
     manim_guidelines = file.read()
 
-secrets_data = toml.load(Path(__file__).parent / "secrets.toml")
-key = secrets_data.get("openrouter_cohere_key", "")
+key = secrets_loader.get("openrouter_cohere_key")
 
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
-DEEPSEEK_API_KEY = secrets_data.get("deepseek", "")
+DEEPSEEK_API_KEY = secrets_loader.get("deepseek", "DEEPSEEK_API_KEY")
 
 MODEL = "google/gemini-2.5-flash"
 OLLAMA_URL = "https://openrouter.ai/api/v1/chat/completions"

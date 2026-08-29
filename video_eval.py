@@ -4,11 +4,10 @@ import json
 from pathlib import Path
 
 import requests
-import toml
 
-BASE_DIR = Path(__file__).parent
-secrets_data = toml.load(BASE_DIR / "secrets.toml")
-KEY = secrets_data.get("openrouter_cohere_key", "")
+import secrets_loader
+
+KEY = secrets_loader.get("openrouter_cohere_key")
 
 URL = "https://openrouter.ai/api/v1/chat/completions"
 MODEL = "google/gemini-2.5-flash"

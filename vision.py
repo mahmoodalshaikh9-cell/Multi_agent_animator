@@ -3,15 +3,14 @@ import json
 import re
 import requests
 import cv2
-import toml
-from pathlib import Path
 
 import geometry as geom
+import secrets_loader
+
 with open("vision_guidelines.md", "r", encoding="utf-8") as file:
     vision_guidelines = file.read()
 
-secrets_data = toml.load(Path(__file__).parent / "secrets.toml")
-key = secrets_data.get("openrouter_cohere_key", "")
+key = secrets_loader.get("openrouter_cohere_key")
 
 MODEL = "google/gemini-2.5-flash"
 OLLAMA_URL = "https://openrouter.ai/api/v1/chat/completions"

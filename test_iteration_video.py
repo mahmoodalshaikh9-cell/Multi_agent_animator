@@ -32,9 +32,9 @@ import shutil
 import subprocess
 import sys
 import time
-import toml
 from pathlib import Path
 
+import secrets_loader
 from extract_frame import extract_frames
 from local_agent import clean_code, extract_requirements, find_unknown_symbols, planning
 from pipeline_deepseek import (
@@ -148,8 +148,7 @@ OR_TIMEOUT = 300
 
 
 def _or_headers() -> dict:
-    secrets_data = toml.load(BASE_DIR / "secrets.toml")
-    key = secrets_data.get("openrouter_cohere_key", "")
+    key = secrets_loader.get("openrouter_cohere_key")
     return {
         "Authorization": f"Bearer {key}",
         "Content-Type": "application/json",
