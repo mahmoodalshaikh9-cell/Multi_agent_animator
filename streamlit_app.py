@@ -3,7 +3,7 @@ import streamlit as st
 import subprocess
 import sys
 from pathlib import Path
-from pipeline_deepseek import main as pipeline_main,extract_frames,extract_requirements,planning,render
+import test_iteration_video
 from local_agent import ask_coder,clean_code
 import json
 import time
@@ -143,48 +143,88 @@ def main(prompt):
 
     prompt = prompt.strip()
 
-    prompt_file = Path(__file__).parent / "prompt.txt"
+    out_root = Path(__file__).parent / "baseline_runs" / "streamlit_ui"
 
-    prompt_file.write_text(prompt, encoding="utf-8")
+    slug = f"ui_{int(time.time())}"
 
-    pipeline_main()
-
-    runs_root = Path(__file__).parent / "runs"
-
-    run_dirs = sorted(
-        p for p in runs_root.iterdir() if p.is_dir()
-    ) if runs_root.exists() else []
-
-    if not run_dirs:
-        raise RuntimeError("No run directory was created.")
-
-    run_dir = run_dirs[-1]
-
-    videos = list(run_dir.rglob("GeneratedScene.mp4"))
-
-    if not videos:
-        raise RuntimeError("Pipeline finished without producing a video.")
-
-    video = videos[-1]
-
-    frames = sorted(
-        run_dir.rglob("frame_*.jpg")
+    test_iteration_video.run(
+        slug,
+        prompts={slug: prompt},
+        out_dir=out_root,
     )
 
-    return video, frames
+    out = out_root / slug
+
+    summary = json.loads(
+        (out / "summary.json").read_text(encoding="utf-8")
+    )
+
+    best = summary.get("best_attempt")
+
+    if best is None:
+        raise RuntimeError("Pipeline finished without a successful attempt.")
+
+    attempt_dir = out / f"attempt_{best}"
+
+    videos = [
+        p for p in attempt_dir.glob("GeneratedScene.mp4") if p.is_file()
+    ]
+
+    if not videos:
+        raise RuntimeError("Best attempt produced no video.")
+
+    video = videos[0]
+
+    frames = sorted(
+        attempt_dir.glob("frames/frame_*.jpg")
+    )
+
+    return video, frames, out
+
+
+def first_last_rendered(run_dir: Path):
+    """Dynamically find the first and last attempt that actually rendered a
+    video. Reads the exact attempt_* dirs on disk (never hardcoded), skipping
+    validation/render-failure attempts that produced no GeneratedScene.mp4."""
+    attempts = sorted(
+        (p for p in run_dir.glob("attempt_*") if p.is_dir()),
+        key=lambda p: int(p.name.split("_")[1]),
+    )
+    rendered = [
+        a for a in attempts
+        if (a / "GeneratedScene.mp4").is_file()
+    ]
+    if not rendered:
+        return None, None
+    first = rendered[0] / "GeneratedScene.mp4"
+    last = rendered[-1] / "GeneratedScene.mp4"
+    return first, last
 
 
 with st.form("my_form"):
     prompt= st.text_area("Your Label", value="Enter text here")
 
-    # Every form must have a submit button.
+   
     submitted = st.form_submit_button("Submit")
     if submitted:
        try:
-           video, frames = main(prompt)
+           video, frames, run_dir = main(prompt)
        except Exception as error:
            st.error(f"Pipeline failed: {error}")
            st.stop()
+
+       first_video, last_video = first_last_rendered(run_dir)
+
+       if first_video is not None:
+           st.subheader("🔄 First vs final render")
+           cols = st.columns(2)
+           with cols[0]:
+               st.caption(f"First render: `{first_video.parent.name}`")
+               st.video(str(first_video))
+           with cols[1]:
+               st.caption(f"Final render: `{last_video.parent.name}`")
+               st.video(str(last_video))
+
        st.subheader("🎥 Animation")
        st.video(str(video))
        if frames:
