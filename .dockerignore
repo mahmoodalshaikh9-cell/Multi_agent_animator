@@ -1,0 +1,13 @@
+.git
+.gitattributes
+.gitignore
+__pycache__/
+*.pyc
+baseline_runs/
+runs/
+media/
+*.mp4
+secrets.toml
+.streamlit/
+.venv/
+venv/
