@@ -1,0 +1,97 @@
+[
+  {
+    "slug": "projectile_motion_3",
+    "title": "Projectile Motion",
+    "prompt": "projectile_motion_3",
+    "video": "assets/projectile_motion_3/best.mp4",
+    "frames": [
+      "assets/projectile_motion_3/frame_0.jpg",
+      "assets/projectile_motion_3/frame_1.jpg",
+      "assets/projectile_motion_3/frame_2.jpg",
+      "assets/projectile_motion_3/frame_3.jpg",
+      "assets/projectile_motion_3/frame_4.jpg",
+      "assets/projectile_motion_3/frame_5.jpg"
+    ],
+    "best_attempt": 5,
+    "best_quality": 20,
+    "best_req_pass": 5,
+    "total_cost_usd": null,
+    "total_duration_s": null
+  },
+  {
+    "slug": "iron_atom_3",
+    "title": "Iron Atom (3D)",
+    "prompt": "iron_atom_3",
+    "video": "assets/iron_atom_3/best.mp4",
+    "frames": [
+      "assets/iron_atom_3/frame_0.jpg",
+      "assets/iron_atom_3/frame_1.jpg",
+      "assets/iron_atom_3/frame_2.jpg",
+      "assets/iron_atom_3/frame_3.jpg",
+      "assets/iron_atom_3/frame_4.jpg",
+      "assets/iron_atom_3/frame_5.jpg"
+    ],
+    "best_attempt": 2,
+    "best_quality": 19,
+    "best_req_pass": 3,
+    "total_cost_usd": null,
+    "total_duration_s": null
+  },
+  {
+    "slug": "kmeans_3",
+    "title": "K-Means Clustering",
+    "prompt": "kmeans_3",
+    "video": "assets/kmeans_3/best.mp4",
+    "frames": [
+      "assets/kmeans_3/frame_0.jpg",
+      "assets/kmeans_3/frame_1.jpg",
+      "assets/kmeans_3/frame_2.jpg",
+      "assets/kmeans_3/frame_3.jpg",
+      "assets/kmeans_3/frame_4.jpg",
+      "assets/kmeans_3/frame_5.jpg"
+    ],
+    "best_attempt": 5,
+    "best_quality": 22,
+    "best_req_pass": 4,
+    "total_cost_usd": null,
+    "total_duration_s": null
+  },
+  {
+    "slug": "la_espada_3",
+    "title": "La Espada",
+    "prompt": "la_espada_3",
+    "video": "assets/la_espada_3/best.mp4",
+    "frames": [
+      "assets/la_espada_3/frame_0.jpg",
+      "assets/la_espada_3/frame_1.jpg",
+      "assets/la_espada_3/frame_2.jpg",
+      "assets/la_espada_3/frame_3.jpg",
+      "assets/la_espada_3/frame_4.jpg",
+      "assets/la_espada_3/frame_5.jpg"
+    ],
+    "best_attempt": 1,
+    "best_quality": null,
+    "best_req_pass": 1,
+    "total_cost_usd": null,
+    "total_duration_s": null
+  },
+  {
+    "slug": "black_hole",
+    "title": "Black Hole Spacetime",
+    "prompt": "black_hole",
+    "video": "assets/black_hole/best.mp4",
+    "frames": [
+      "assets/black_hole/frame_0.jpg",
+      "assets/black_hole/frame_1.jpg",
+      "assets/black_hole/frame_2.jpg",
+      "assets/black_hole/frame_3.jpg",
+      "assets/black_hole/frame_4.jpg",
+      "assets/black_hole/frame_5.jpg"
+    ],
+    "best_attempt": 4,
+    "best_quality": 24,
+    "best_req_pass": 5,
+    "total_cost_usd": null,
+    "total_duration_s": null
+  }
+]

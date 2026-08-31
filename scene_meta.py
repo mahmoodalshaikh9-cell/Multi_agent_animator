@@ -10,6 +10,7 @@ import re
 
 from openai import APIConnectionError, APITimeoutError, InternalServerError, OpenAI
 
+import metrics
 import pipeline_deepseek as pipeline
 from local_agent import clean_code
 
@@ -111,6 +112,15 @@ def ask_coder_meta(prompt: str, temperature: float = 0.2, three_d: bool = False)
                 max_tokens=4096,
             )
             print(f"  [CODEGEN] {model_name} responded OK")
+            usage = response.usage
+            metrics.record_llm(
+                model_name,
+                prompt,
+                {
+                    "prompt_tokens": getattr(usage, "prompt_tokens", 0),
+                    "completion_tokens": getattr(usage, "completion_tokens", 0),
+                },
+            )
             return response.choices[0].message.content
         except (
             APITimeoutError,

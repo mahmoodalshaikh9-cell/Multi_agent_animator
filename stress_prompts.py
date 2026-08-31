@@ -21,4 +21,33 @@ Use different colors to distinguish the spacetime grid, black hole, and light ra
 As the animation progresses, first show flat spacetime, then introduce the black hole and deformation, and finally animate multiple light rays through the curved spacetime. The final shot should clearly show the relationship between the depth of the gravitational well and the amount by which the light bends.
 
 Avoid making it look like a simple textbook diagram. It should feel like a cinematic scientific visualization while still making the underlying physical concept understandable.""",
+    "lithium_battery": """Create a short educational animation explaining how a lithium-ion battery works.
+
+The animation should show the battery during charging and discharging, including the movement of lithium ions between the anode and cathode through the electrolyte, while electrons travel through the external circuit. Clearly label the anode, cathode, electrolyte, separator, and external circuit.
+
+Use a clean 2D scientific-illustration style. Start with a simple overview, then zoom into the internal structure. Use arrows to distinguish ion movement from electron movement. Keep the animation understandable to a high-school student with basic chemistry knowledge.
+
+The final animation should be approximately 30-45 seconds long, visually consistent, and avoid introducing unnecessary technical details that aren't relevant to explaining the basic mechanism.""",
+    "airplane_lift": """can you make a video explaining how airplanes actually stay up? like i know theres wings and air and stuff but i dont really get it. maybe explain the whole lift thing without making it insanely technical. also why doesnt the plane just fall when it goes really high?? idk lol just make it make sense""",
+    "rain_formation": """Make a whimsical animated explanation of how rain forms.
+
+The visual style should feel like a tiny fantasy world inside a cloud. Water molecules should be represented as small blue characters that gather together, rise with warm air, cool down, form droplets, and eventually become heavy enough to fall as rain.
+
+Keep the science accurate, but present it with playful visual metaphors. The narrator should have a warm, curious tone, as if telling a bedtime story to an intelligent child.
+
+End by zooming out from the individual droplets to reveal a complete rainstorm over a landscape.
+
+Target length: about 40 seconds.""",
+    "binary_search": """Generate a concise visualization explaining binary search on a sorted array.
+
+Use an array of 15-17 numbered elements. Begin by highlighting the complete search interval and selecting the midpoint. At each iteration, compare the target value against the midpoint and eliminate the irrelevant half of the array. Clearly show the search interval shrinking after every comparison.
+
+The animation should explicitly communicate that the algorithm has logarithmic time complexity, ideally by visually demonstrating that the remaining search space is approximately halved at each step.
+
+Use a professional computer-science lecture aesthetic: dark background, high-contrast text, minimal decoration, smooth transitions, and precise geometric alignment. Include a final frame displaying O(log n).
+
+Target audience: undergraduate computer-science students.""",
+    "sky_blue": """make a cool video explaining why the sky is blue
+
+maybe start with the sun and then show the light hitting the atmosphere and stuff. explain why sunsets are orange too. keep it interesting pls""",
 }

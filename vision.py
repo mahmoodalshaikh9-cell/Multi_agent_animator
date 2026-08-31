@@ -5,6 +5,7 @@ import requests
 import cv2
 
 import geometry as geom
+import metrics
 import secrets_loader
 
 with open("vision_guidelines.md", "r", encoding="utf-8") as file:
@@ -79,7 +80,10 @@ def describe_frame(image_path: str) -> str:
 
     response.raise_for_status()
 
-    return (response.json()["choices"][0]["message"].get("content") or "").strip()
+    payload = response.json()
+    metrics.record_llm(zai, "describe_frame", payload.get("usage"))
+
+    return (payload["choices"][0]["message"].get("content") or "").strip()
 
 
 FILLER_WORDS = {
@@ -254,7 +258,10 @@ def evaluate_requirement(
 
     response.raise_for_status()
 
-    content = response.json()["choices"][0]["message"].get("content")
+    payload = response.json()
+    metrics.record_llm(MODEL, user_content, payload.get("usage"))
+
+    content = payload["choices"][0]["message"].get("content")
     text = (content or "").strip()
 
     try:
@@ -471,7 +478,10 @@ def _run_critique(
     )
     response.raise_for_status()
 
-    content = response.json()["choices"][0]["message"].get("content")
+    payload = response.json()
+    metrics.record_llm(MODEL, prompt, payload.get("usage"))
+
+    content = payload["choices"][0]["message"].get("content")
     text = (content or "").strip()
     if not text:
         return {

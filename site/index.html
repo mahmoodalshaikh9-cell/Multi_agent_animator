@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Capstone Proto — Animation Gallery</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #1a1d27;
+    --panel2: #222633;
+    --text: #e6e8ee;
+    --muted: #9aa1b2;
+    --accent: #4f8cff;
+    --border: #2c3242;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  header {
+    padding: 24px 28px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { margin: 0; font-size: 26px; }
+  header p { margin: 6px 0 0; color: var(--muted); }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 20px 20px 60px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    margin: 18px 0;
+  }
+  .card h2 { margin: 0 0 4px; font-size: 20px; }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .meta code { background: var(--panel2); padding: 1px 6px; border-radius: 5px; }
+  video { width: 100%; border-radius: 10px; background: #000; display: block; }
+  .frames {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+  .frames figure { margin: 0; flex: 1 1 120px; max-width: 150px; }
+  .frames img { width: 100%; border-radius: 6px; display: block; border: 1px solid var(--border); }
+  .frames figcaption { font-size: 11px; color: var(--muted); text-align: center; margin-top: 4px; }
+  .gen {
+    background: var(--panel2);
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 28px;
+  }
+  .gen h3 { margin: 0 0 6px; }
+  button:disabled {
+    background: #2a2e3b;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: not-allowed;
+    font-size: 14px;
+  }
+  .note { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .empty { color: var(--muted); text-align: center; padding: 40px 0; }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f7fa; --panel: #ffffff; --panel2: #eef1f6;
+      --text: #1a1d27; --muted: #5d6675; --border: #d7dce6;
+    }
+    button:disabled { background: #e3e7ef; color: #6b7280; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Capstone Proto — Animation Gallery</h1>
+  <p>Best render from each of the first stress-test prompts.</p>
+</header>
+
+<main class="wrap">
+  <div id="gallery">
+    <div class="empty">Loading catalog…</div>
+  </div>
+
+  <section class="gen" id="generate">
+    <h3>Generate a new animation</h3>
+    <p>
+      This static build only plays pre-rendered videos. Live generation needs
+      the rendering backend (Manim + the video pipeline + an LLM API) that
+      cannot run on a static GitHub Pages host.
+    </p>
+    <button disabled title="Not available on a static host">Generate new (unavailable — static host)</button>
+    <p class="note">
+      To enable live generation you'd deploy the <code>test_iteration_video.py</code>
+      pipeline on a paid host with a CPU (and top up the OpenRouter API). This
+      static gallery is the no-backend option that works today.
+    </p>
+  </section>
+</main>
+
+<script>
+async function load() {
+  const el = document.getElementById('gallery');
+  let catalog;
+  try {
+    const res = await fetch('catalog.json', { cache: 'no-store' });
+    catalog = await res.json();
+  } catch (e) {
+    el.innerHTML = '<div class="empty">Could not load catalog.json</div>';
+    return;
+  }
+  if (!catalog.length) {
+    el.innerHTML = '<div class="empty">No pre-rendered animations found.</div>';
+    return;
+  }
+  el.innerHTML = '';
+  for (const item of catalog) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const quality = item.best_quality != null ? item.best_quality + '/30' : 'n/a';
+    const cost = item.total_cost_usd != null
+      ? '$' + Number(item.total_cost_usd).toFixed(4)
+      : 'n/a';
+    const dur = item.total_duration_s != null
+      ? Math.round(item.total_duration_s) + 's'
+      : 'n/a';
+    const frames = (item.frames || []).map((f, i) =>
+      `<figure><img src="${f}" alt="frame ${i}"><figcaption>frame ${i}</figcaption></figure>`
+    ).join('');
+    card.innerHTML = `
+      <h2>${esc(item.title)}</h2>
+      <div class="meta">
+        <code>${esc(item.slug)}</code> ·
+        best attempt <code>#${esc(item.best_attempt)}</code> ·
+        quality <code>${quality}</code> ·
+        dur <code>${dur}</code> ·
+        cost <code>${cost}</code>
+      </div>
+      <video controls preload="metadata" src="${esc(item.video)}"></video>
+      ${frames ? `<div class="frames">${frames}</div>` : ''}
+    `;
+    el.appendChild(card);
+  }
+}
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+load();
+</script>
+</body>
+</html>

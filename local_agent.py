@@ -7,6 +7,7 @@ import re
 import requests
 import manim
 
+import metrics
 import secrets_loader
 
 with open("manim_guidelines.md", "r", encoding="utf-8") as file:
@@ -102,7 +103,10 @@ Rules:
 
     response.raise_for_status()
 
-    text = response.json()["choices"][0]["message"]["content"].strip()
+    payload = response.json()
+    metrics.record_llm(MODEL, prompt, payload.get("usage"))
+
+    text = payload["choices"][0]["message"]["content"].strip()
 
     if text.startswith("```"):
         text = text.split("\n", 1)[1]
@@ -323,7 +327,10 @@ Create the scene plan.
 
     response.raise_for_status()
 
-    text = response.json()["choices"][0]["message"]["content"].strip()
+    payload = response.json()
+    metrics.record_llm(MODEL, prompt, payload.get("usage"))
+
+    text = payload["choices"][0]["message"]["content"].strip()
 
     if text.startswith("```"):
         text = text.split("\n", 1)[1]
@@ -374,5 +381,8 @@ Return ONLY the refined prompt, no explanations.
 
     response.raise_for_status()
 
-    return response.json()["choices"][0]["message"]["content"].strip()
+    payload = response.json()
+    metrics.record_llm(gemni_vision, prompt, payload.get("usage"))
+
+    return payload["choices"][0]["message"]["content"].strip()
     

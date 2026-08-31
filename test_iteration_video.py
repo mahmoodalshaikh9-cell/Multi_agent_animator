@@ -51,6 +51,7 @@ from vision import review_animation_v2
 
 import geometry
 import merge_evaluation
+import metrics
 import render_figures
 import scene_meta
 import static_checks
@@ -172,7 +173,9 @@ def _or_chat(prompt: str, system_prompt: str, temperature: float) -> str:
         timeout=OR_TIMEOUT,
     )
     response.raise_for_status()
-    return response.json()["choices"][0]["message"]["content"]
+    payload = response.json()
+    metrics.record_llm(OR_MODEL, prompt, payload.get("usage"))
+    return payload["choices"][0]["message"]["content"]
 
 
 def ask_coder_luna(prompt: str, temperature: float = 0.2, three_d: bool = False) -> str:
@@ -207,7 +210,10 @@ def generate_repair(repair_prompt: str, temperature: float = 0.2, three_d: bool 
 
 def print_table(out: Path, attempts: list[dict]) -> None:
     print(f"\n--- TABLE {out.name} ---")
-    header = f"{'Attempt':<8}{'Stage':<18}{'Reqs':<8}{'Video':<7}{'Temporal':<8}{'Total'}"
+    header = (
+        f"{'Attempt':<8}{'Stage':<18}{'Reqs':<8}{'Video':<7}"
+        f"{'Temporal':<8}{'Total':<8}{'Dur(s)':<8}{'Cost($)':<10}"
+    )
     print(header)
     print("-" * len(header))
     for a in attempts:
@@ -218,12 +224,21 @@ def print_table(out: Path, attempts: list[dict]) -> None:
         )
         total = a.get("quality_total")
         total = total if total is not None else "-"
+        metrics_s = a.get("metrics") or {}
+        dur = metrics_s.get("duration_s", "-")
+        cost = metrics_s.get("cost_usd", "-")
         print(
             f"{a['attempt']:<8}{a['stage']:<18}{reqs:<8}"
             f"{'Y' if a.get('video_available') else 'N':<7}"
             f"{'Y' if a.get('temporal_available') else 'N':<8}"
-            f"{total:<8}"
+            f"{total:<8}{dur:<8}{cost:<10}"
         )
+
+
+def close_attempt_phase() -> dict:
+    """Close the current attempt's timing phase and return its metrics snapshot."""
+    metrics.METRICS.phase(None)
+    return metrics.attempt_snapshot()
 
 
 # Budget safety valve for the video branch. When True, video_eval only runs
@@ -354,6 +369,9 @@ def run(slug: str, consume: bool = CONSUME_ATTEMPTS, out_dir: Path | None = None
 
     print(f"\n{'=' * 70}\nVIDEO ITERATION [{slug}]: {prompt}\n{'=' * 70}")
 
+    metrics.METRICS.attempt_start = time.time()
+    metrics.METRICS.run_start = time.time()
+    metrics.METRICS.phase("setup")
     requirements = extract_requirements(prompt)
     _write(out / "requirements.json", json.dumps(requirements, indent=2))
     scene_plan = planning(prompt, requirements)
@@ -364,6 +382,7 @@ def run(slug: str, consume: bool = CONSUME_ATTEMPTS, out_dir: Path | None = None
     print("\n[3] Generating code + scene_meta...")
     code, meta, has_meta = generate(prompt, scene_plan, temperature=0.1, three_d=three_d)
     print(f"  scene_meta present: {has_meta} ({len(meta.get('objects', []))} objects)")
+    metrics.METRICS.phase(None)
 
     previous_result = None
     pipeline_start = time.time()
@@ -376,6 +395,8 @@ def run(slug: str, consume: bool = CONSUME_ATTEMPTS, out_dir: Path | None = None
         if elapsed > MAX_PIPELINE_TIME:
             print(f"\nPipeline time limit reached ({MAX_PIPELINE_TIME}s). Stopping.")
             break
+        metrics.start_attempt()
+        metrics.METRICS.phase("validation")
 
         attempt_dir = out / f"attempt_{attempt}"
         attempt_dir.mkdir(parents=True, exist_ok=True)
@@ -579,11 +600,13 @@ Rules:
                     "video_available": False,
                     "temporal_available": False,
                     "quality_total": None,
+                    "metrics": close_attempt_phase(),
                 }
             )
             continue
 
         # --- geometry + figures (pre-render hard blocking) ---
+        metrics.METRICS.phase("figures_geometry")
         if has_meta and meta:
             try:
                 fig_info = render_figures.render_figures(meta, attempt_dir)
@@ -618,6 +641,7 @@ Rules:
                         "video_available": False,
                         "temporal_available": False,
                         "quality_total": None,
+                        "metrics": close_attempt_phase(),
                     }
                 )
                 continue
@@ -625,6 +649,7 @@ Rules:
             _write(attempt_dir / "scene_meta.json", "{}")
 
         # --- render ---
+        metrics.METRICS.phase("render")
         try:
             print("\n[4] Rendering...")
             video = render(
@@ -647,6 +672,7 @@ Rules:
                     "video_available": False,
                     "temporal_available": False,
                     "quality_total": None,
+                    "metrics": close_attempt_phase(),
                 }
             )
             continue
@@ -667,17 +693,20 @@ Rules:
                     "video_available": False,
                     "temporal_available": False,
                     "quality_total": None,
+                    "metrics": close_attempt_phase(),
                 }
             )
             continue
 
         # --- frames + three evaluation branches ---
+        metrics.METRICS.phase("frames")
         print("\n[5] Extracting frames...")
         frames = extract_frames(
             video, attempt_dir / "frames", count=FRAME_SAMPLE_COUNT
         )
         frame_paths = [str(f) for f in frames]
 
+        metrics.METRICS.phase("frame_branch")
         print("\n[6a] Frame branch (review_animation_v2)...")
         frame_result = review_animation_v2(
             prompt,
@@ -690,11 +719,13 @@ Rules:
         previous_result = best["result"] if best else frame_result
         _write(attempt_dir / "review_v2.json", json.dumps(frame_result, indent=2))
 
+        metrics.METRICS.phase("temporal")
         print("\n[6b] Deterministic temporal analysis...")
         temporal_result = temporal.analyze(video)
         _write(attempt_dir / "temporal_analysis.json", json.dumps(temporal_result, indent=2))
         temporal_available = bool(temporal_result.get("available"))
 
+        metrics.METRICS.phase("video_branch")
         print("\n[6c] Video-level temporal evaluation...")
         frame_failed = frame_result.get("failed_ids", [])
         frame_total = (frame_result.get("visual_critique", {}) or {}).get("total")
@@ -724,6 +755,7 @@ Rules:
         if not video_available:
             print(f"  video branch unavailable: {video_result.get('reason', '')}")
 
+        metrics.METRICS.phase("merge")
         print("\n[6d] Merging branches...")
         result = merge_evaluation.merge(
             frame_result, video_result, geometry_errors,
@@ -755,6 +787,7 @@ Rules:
                 "video_available": video_available,
                 "temporal_available": temporal_available,
                 "quality_total": quality.get("total"),
+                "metrics": close_attempt_phase(),
             }
         )
 
@@ -839,10 +872,12 @@ Rules:
         else:
             break
 
+        metrics.METRICS.phase("repair")
         _write(attempt_dir / "repair_prompt.txt", repair_prompt)
         code, meta, has_meta = generate_repair(repair_prompt, three_d=three_d)
         _write(attempt_dir / "next_code.py", code)
         print(f"  repaired incrementally, scene_meta present: {has_meta}")
+        metrics.METRICS.phase(None)
         continue
 
     else:
@@ -854,6 +889,7 @@ Rules:
         "best_attempt": best["attempt"] if best else None,
         "best_req_pass": best["req_pass"] if best else None,
         "best_quality": best["quality"] if best else None,
+        **metrics.totals_summary(),
         "attempts": [
             {**a, "quality": None} for a in attempts
         ],

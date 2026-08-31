@@ -5,6 +5,7 @@ from pathlib import Path
 
 import requests
 
+import metrics
 import secrets_loader
 
 KEY = secrets_loader.get("openrouter_cohere_key")
@@ -123,7 +124,12 @@ def evaluate_video(video_path, requirements, prompt):
         return {"available": False, "reason": f"{type(err).__name__}: {err}"}
 
     try:
-        content = response.json()["choices"][0]["message"].get("content")
+        payload = response.json()
+    except ValueError as err:
+        return {"available": False, "reason": f"bad response: {err}"}
+    metrics.record_llm(MODEL, prompt + "\n" + req_text, payload.get("usage"))
+    try:
+        content = payload["choices"][0]["message"].get("content")
         text = (content or "").strip()
     except (KeyError, IndexError, ValueError, AttributeError) as err:
         return {"available": False, "reason": f"bad response: {err}"}

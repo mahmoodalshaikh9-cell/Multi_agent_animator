@@ -7,3 +7,4 @@ media/
 baseline_runs/
 *.mp4
 !demo/*.mp4
+!site/assets/**/*.mp4
