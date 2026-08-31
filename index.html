@@ -10,16 +10,13 @@
   body {
     margin: 0;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
     background: radial-gradient(1200px 600px at 50% -10%, #1a2332, #0e1117);
     color: #e6edf3;
   }
   .card {
-    max-width: 640px;
-    margin: 2rem;
+    max-width: 860px;
+    margin: 2rem auto;
     padding: 3rem 2.5rem;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -63,23 +60,147 @@
     font-weight: 600;
   }
   a.button:hover { background: #79b8ff; }
+
+  .prompt-box {
+    text-align: left;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .prompt-box label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  textarea {
+    width: 100%;
+    min-height: 110px;
+    resize: vertical;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    color: #e6edf3;
+    font: inherit;
+  }
+  textarea:focus { outline: none; border-color: #58a6ff; }
+  button {
+    margin-top: 0.9rem;
+    padding: 0.7rem 1.6rem;
+    border: none;
+    border-radius: 8px;
+    background: #2ea043;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { background: #3fb950; }
+  .note {
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+    color: #8b98a9;
+  }
+
+  .section {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .section h2 {
+    margin: 0 0 1rem;
+    font-size: 1.3rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+  figure { margin: 0; }
+  figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #9fb0c3;
+  }
+  video {
+    width: 100%;
+    border-radius: 8px;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .hidden { display: none; }
 </style>
 </head>
 <body>
   <main class="card">
     <h1>Capstone Proto</h1>
-    <span class="badge">Coming soon</span>
+    <span class="badge">Demo</span>
     <p>
       An AI pipeline that turns a plain-English prompt into a rendered
       Manim animation, then iterates on it using vision and temporal
       evaluation until it looks right.
     </p>
-    <ul>
-      <li>Prompt to code with DeepSeek + OpenRouter models</li>
-      <li>Manim scene generation and preview rendering</li>
-      <li>Frame-by-frame vision review and repair loop</li>
-    </ul>
-    <a class="button" href="https://github.com/mahmoodalshaikh9-cell/capston_proto" target="_blank" rel="noopener">View source on GitHub</a>
+
+    <div class="prompt-box">
+      <label for="prompt">Animation prompt</label>
+      <textarea id="prompt" placeholder="Describe the animation you want...">explain how streamlit compiles python into UI</textarea>
+      <button id="generate" type="button">Generate</button>
+      <p class="note" id="note">
+        Runs on GitHub Actions. Open the
+        <a href="https://github.com/mahmoodalshaikh9-cell/capston_proto/actions/workflows/render.yml" target="_blank" rel="noopener">Render animation workflow</a>,
+        enter a prompt, and the latest result appears here.
+      </p>
+    </div>
+
+    <section class="section hidden" id="results">
+      <h2>&#x1f500; First vs final render</h2>
+      <p class="note" id="resultMeta"></p>
+      <div class="grid">
+        <figure>
+          <video id="first" controls playsinline preload="none" src="demo/first.mp4"></video>
+          <figcaption>First render: <code id="firstLabel">attempt_1</code></figcaption>
+        </figure>
+        <figure>
+          <video id="final" controls playsinline preload="none" src="demo/final.mp4"></video>
+          <figcaption>Final render: <code id="finalLabel">attempt_4</code></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <a class="button" href="https://github.com/mahmoodalshaikh9-cell/capston_proto" target="_blank" rel="noopener">View source on GitHub</a>
+      <a class="button" href="https://github.com/mahmoodalshaikh9-cell/capston_proto/actions/workflows/render.yml" target="_blank" rel="noopener" style="background:#2ea043;color:#fff;">Generate new animation</a>
+    </section>
   </main>
+
+  <script>
+    const results = document.getElementById("results");
+    const promptEl = document.getElementById("prompt");
+
+    function showResults() {
+      results.classList.remove("hidden");
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("first").load();
+      document.getElementById("final").load();
+    }
+
+    document.getElementById("generate").addEventListener("click", showResults);
+
+    fetch("demo/run.json")
+      .then(r => r.json())
+      .then(run => {
+        if (run && run.prompt) promptEl.value = run.prompt;
+        if (run && run.first_attempt) {
+          document.getElementById("firstLabel").textContent = run.first_attempt;
+          document.getElementById("finalLabel").textContent = run.last_attempt;
+          document.getElementById("resultMeta").textContent =
+            "Prompt: \u201c" + run.prompt + "\u201d \u2014 generated " + run.generated_at;
+        }
+        showResults();
+      })
+      .catch(() => {
+        results.classList.remove("hidden");
+      });
+  </script>
 </body>
 </html>

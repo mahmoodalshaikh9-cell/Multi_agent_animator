@@ -1,0 +1,57 @@
+name: Render animation
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "Animation prompt"
+        required: true
+        default: "explain how streamlit compiles python into UI"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      deepseek: ${{ secrets.DEEPSEEK }}
+      openrouter_cohere_key: ${{ secrets.OPENROUTER_COHERE_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies (Manim build + headless GL)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential pkg-config ffmpeg xvfb \
+            libpango1.0-dev libcairo2-dev libffi-dev libfreetype-dev \
+            libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 libcairo2 \
+            libgl1 libegl1 libglx-mesa0 libgles2 libxkbcommon0 libx11-6 \
+            fonts-dejavu-core fonts-liberation
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pipeline
+        run: |
+          LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a python render_ci.py --prompt "${{ inputs.prompt }}"
+
+      - name: Commit rendered results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add demo/first.mp4 demo/final.mp4 demo/run.json
+          git diff --cached --quiet || {
+            git commit -m "render: ${{ inputs.prompt }}"
+            git push
+          }

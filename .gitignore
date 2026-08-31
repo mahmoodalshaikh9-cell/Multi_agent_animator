@@ -6,3 +6,4 @@ __pycache__/
 media/
 baseline_runs/
 *.mp4
+!demo/*.mp4
