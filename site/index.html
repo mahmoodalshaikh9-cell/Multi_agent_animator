@@ -40,12 +40,6 @@
   .meta { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
   .meta code { background: var(--panel2); padding: 1px 6px; border-radius: 5px; }
   video { width: 100%; border-radius: 10px; background: #000; display: block; }
-  .frames {
-    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
-  }
-  .frames figure { margin: 0; flex: 1 1 120px; max-width: 150px; }
-  .frames img { width: 100%; border-radius: 6px; display: block; border: 1px solid var(--border); }
-  .frames figcaption { font-size: 11px; color: var(--muted); text-align: center; margin-top: 4px; }
   .gen {
     background: var(--panel2);
     border: 1px dashed var(--border);
@@ -121,26 +115,10 @@ async function load() {
     const card = document.createElement('div');
     card.className = 'card';
     const quality = item.best_quality != null ? item.best_quality + '/30' : 'n/a';
-    const cost = item.total_cost_usd != null
-      ? '$' + Number(item.total_cost_usd).toFixed(4)
-      : 'n/a';
-    const dur = item.total_duration_s != null
-      ? Math.round(item.total_duration_s) + 's'
-      : 'n/a';
-    const frames = (item.frames || []).map((f, i) =>
-      `<figure><img src="${f}" alt="frame ${i}"><figcaption>frame ${i}</figcaption></figure>`
-    ).join('');
     card.innerHTML = `
       <h2>${esc(item.title)}</h2>
-      <div class="meta">
-        <code>${esc(item.slug)}</code> ·
-        best attempt <code>#${esc(item.best_attempt)}</code> ·
-        quality <code>${quality}</code> ·
-        dur <code>${dur}</code> ·
-        cost <code>${cost}</code>
-      </div>
+      <div class="meta">quality <code>${quality}</code></div>
       <video controls preload="metadata" src="${esc(item.video)}"></video>
-      ${frames ? `<div class="frames">${frames}</div>` : ''}
     `;
     el.appendChild(card);
   }

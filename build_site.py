@@ -54,21 +54,12 @@ def main():
         dest.mkdir(parents=True, exist_ok=True)
         shutil.copy2(video_src, dest / "best.mp4")
 
-        frame_paths = []
-        for i, frame in enumerate(
-            sorted(attempt_dir.glob("frames/frame_*.jpg"))
-        ):
-            fname = f"frame_{i}.jpg"
-            shutil.copy2(frame, dest / fname)
-            frame_paths.append(f"assets/{slug}/{fname}")
-
         catalog.append(
             {
                 "slug": slug,
                 "title": TITLES.get(slug, slug),
                 "prompt": summary.get("slug"),
                 "video": f"assets/{slug}/best.mp4",
-                "frames": frame_paths,
                 "best_attempt": best,
                 "best_quality": summary.get("best_quality"),
                 "best_req_pass": summary.get("best_req_pass"),
@@ -76,7 +67,7 @@ def main():
                 "total_duration_s": summary.get("total_duration_s"),
             }
         )
-        print(f"  built {slug}: video={video_src.name} frames={len(frame_paths)}")
+        print(f"  built {slug}: video={video_src.name}")
 
     (OUT / "catalog.json").write_text(
         json.dumps(catalog, indent=2), encoding="utf-8"
