@@ -25,36 +25,44 @@ _BOOTSTRAP_CSS = """
 /* ---------- global ---------- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ---------- palette ---------- */
 :root {
-    --bs-primary: #6610f2;
+    --cp-white: #FFFFFF;
+    --cp-charcoal: #242424;
+    --cp-slate: #5C7C89;
+    --cp-teal: #1F4959;
+    --cp-midnight: #011425;
+    --bs-primary: var(--cp-teal);
     --bs-body-font-family: 'Inter', sans-serif;
 }
 
 html, body, [class*="css"]  {
     font-family: 'Inter', sans-serif;
+    background: var(--cp-midnight);
+    color: var(--cp-white);
 }
 
 /* ---------- header bar ---------- */
 .header-bar {
-    background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
+    background: linear-gradient(135deg, var(--cp-teal) 0%, var(--cp-charcoal) 100%);
     padding: 1.8rem 2rem 1.4rem;
     border-radius: 0 0 1rem 1rem;
     margin: -1rem -1rem 1.5rem -1rem;
-    color: #fff;
+    color: var(--cp-white);
+    border-bottom: 2px solid var(--cp-slate);
 }
-.header-bar h1 { margin: 0; font-weight: 700; font-size: 1.75rem; }
-.header-bar p  { margin: 0.3rem 0 0; opacity: .85; font-size: .95rem; }
+.header-bar h1 { margin: 0; font-weight: 700; font-size: 1.75rem; color: var(--cp-white); }
+.header-bar p  { margin: 0.3rem 0 0; opacity: .85; font-size: .95rem; color: var(--cp-slate); }
 
 /* ---------- cards ---------- */
 .card {
-    background: #fff;
-    border: 1px solid #dee2e6;
+    background: var(--cp-charcoal);
+    border: 1px solid var(--cp-slate);
     border-radius: .75rem;
     padding: 1.25rem 1.5rem;
     margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
 }
-.dark .card { background: #1e1e1e; border-color: #333; }
 
 /* ---------- section labels ---------- */
 .section-label {
@@ -62,35 +70,55 @@ html, body, [class*="css"]  {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .06em;
-    color: #6c757d;
+    color: var(--cp-slate);
     margin-bottom: .5rem;
 }
 
 /* ---------- submit button polish ---------- */
 .stButton > button {
+    background: var(--cp-teal);
+    color: var(--cp-white);
+    border: 1px solid var(--cp-slate);
     border-radius: .5rem;
     font-weight: 600;
-    transition: transform .1s ease;
+    transition: all .15s ease;
 }
-.stButton > button:hover { transform: translateY(-1px); }
+.stButton > button:hover {
+    transform: translateY(-1px);
+    background: var(--cp-slate);
+    border-color: var(--cp-white);
+}
 
 /* ---------- video containers ---------- */
 .video-box {
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--cp-slate);
     border-radius: .75rem;
     overflow: hidden;
     background: #000;
 }
-.dark .video-box { border-color: #333; }
+
+/* ---------- streamlit overrides ---------- */
+.stTextInput > div > div > input,
+.stTextArea > div > div > textarea {
+    background: var(--cp-charcoal) !important;
+    color: var(--cp-white) !important;
+    border: 1px solid var(--cp-slate) !important;
+    border-radius: .5rem !important;
+}
+.stTextInput > div > div > input:focus,
+.stTextArea > div > div > textarea:focus {
+    border-color: var(--cp-teal) !important;
+    box-shadow: 0 0 0 1px var(--cp-teal) !important;
+}
 
 /* ---------- footer ---------- */
 .footer {
     text-align: center;
-    color: #6c757d;
+    color: var(--cp-slate);
     font-size: .8rem;
     margin-top: 2rem;
     padding-top: 1rem;
-    border-top: 1px solid #dee2e6;
+    border-top: 1px solid var(--cp-charcoal);
 }
 </style>
 """
@@ -148,14 +176,14 @@ def first_last_rendered(run_dir: Path):
     )
 
 
-st.set_page_config(page_title="Automated animation engine", layout="wide")
+st.set_page_config(page_title="Capstone Proto", page_icon="🎬", layout="wide")
 st.markdown(_BOOTSTRAP_CSS, unsafe_allow_html=True)
 
 # ---------- header ----------
 st.markdown(
     """
 <div class="header-bar">
-    <h1>Automated animation engine</h1>
+    <h1>🎬 Capstone Proto</h1>
     <p>Describe an animation in plain English — the pipeline writes Manim code,
        renders, evaluates, and iterates until your prompt is satisfied.</p>
 </div>
@@ -203,31 +231,3 @@ if submitted:
                     st.markdown(f"**{first_video.parent.name}**")
                     st.video(str(first_video))
                 with cols[1]:
-                    st.markdown(f"**{last_video.parent.name}**")
-                    st.video(str(last_video))
-
-            st.markdown('<div class="section-label">Best Animation</div>', unsafe_allow_html=True)
-            st.video(str(video))
-
-            if frames:
-                st.markdown('<div class="section-label">Vision Frames</div>', unsafe_allow_html=True)
-                cols = st.columns(min(len(frames), 6))
-                for col, frame in zip(cols, frames):
-                    with col:
-                        st.image(
-                            str(frame),
-                            caption=frame.name,
-                            use_container_width=True,
-                        )
-        except Exception as error:
-            logging.exception("Pipeline failed")
-            st.error(f"Pipeline failed: {error}")
-            st.exception(error)
-        finally:
-            _RUN_LOCK.release()
-
-# ---------- footer ----------
-st.markdown(
-    '<div class="footer"> Manim animation generation pipeline</div>',
-    unsafe_allow_html=True,
-)
