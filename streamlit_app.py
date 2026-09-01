@@ -228,6 +228,6 @@ if submitted:
 
 # ---------- footer ----------
 st.markdown(
-    '<div class="footer">Capstone Proto — Manim animation generation pipeline</div>',
+    '<div class="footer"> Manim animation generation pipeline</div>',
     unsafe_allow_html=True,
 )
