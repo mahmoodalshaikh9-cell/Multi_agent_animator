@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Capstone Proto</title>
+<title>Automated Animation Engine</title>
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -14,15 +14,12 @@
     background: radial-gradient(1200px 600px at 50% -10%, #1a2332, #0e1117);
     color: #e6edf3;
   }
-  .card {
-    max-width: 860px;
-    margin: 2rem auto;
-    padding: 3rem 2.5rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    text-align: center;
+  main {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
   }
+  header { text-align: center; margin-bottom: 2.5rem; }
   h1 {
     margin: 0 0 0.5rem;
     font-size: 2.2rem;
@@ -31,7 +28,7 @@
   .badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
     font-size: 0.8rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -39,88 +36,41 @@
     border: 1px solid rgba(158, 203, 255, 0.4);
     border-radius: 999px;
   }
-  p {
+  header p {
+    margin: 0;
     line-height: 1.6;
     color: #9fb0c3;
   }
-  ul {
-    text-align: left;
-    display: inline-block;
-    margin: 1rem 0 1.5rem;
-    color: #c6d2df;
+  .card {
+    margin: 1.5rem 0;
+    padding: 1.25rem 1.25rem 1.4rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
   }
-  li { margin: 0.35rem 0; }
-  a.button {
-    display: inline-block;
-    padding: 0.7rem 1.4rem;
-    color: #0e1117;
-    background: #58a6ff;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
+  .card h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.2rem;
   }
-  a.button:hover { background: #79b8ff; }
-
-  .prompt-box {
-    text-align: left;
-    margin: 1.5rem 0 0.5rem;
-  }
-  .prompt-box label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  textarea {
-    width: 100%;
-    min-height: 110px;
-    resize: vertical;
-    padding: 0.8rem 0.9rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.25);
-    color: #e6edf3;
-    font: inherit;
-  }
-  textarea:focus { outline: none; border-color: #58a6ff; }
-  button {
-    margin-top: 0.9rem;
-    padding: 0.7rem 1.6rem;
-    border: none;
-    border-radius: 8px;
-    background: #2ea043;
-    color: #fff;
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  button:hover { background: #3fb950; }
-  .note {
-    margin-top: 0.7rem;
+  .card .meta {
+    margin: 0 0 1rem;
     font-size: 0.85rem;
     color: #8b98a9;
-  }
-
-  .section {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  .section h2 {
-    margin: 0 0 1rem;
-    font-size: 1.3rem;
   }
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
-  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
   figure { margin: 0; }
   figcaption {
     margin-top: 0.5rem;
     font-size: 0.85rem;
     color: #9fb0c3;
+  }
+  figcaption code {
+    color: #9ecbff;
   }
   video {
     width: 100%;
@@ -128,79 +78,94 @@
     background: #000;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  .hidden { display: none; }
 </style>
 </head>
 <body>
-  <main class="card">
-    <h1>Capstone Proto</h1>
-    <span class="badge">Demo</span>
-    <p>
-      An AI pipeline that turns a plain-English prompt into a rendered
-      Manim animation, then iterates on it using vision and temporal
-      evaluation until it looks right.
-    </p>
-
-    <div class="prompt-box">
-      <label for="prompt">Animation prompt</label>
-      <textarea id="prompt" placeholder="Describe the animation you want...">explain how streamlit compiles python into UI</textarea>
-      <button id="generate" type="button">Generate</button>
-      <p class="note" id="note">
-        Runs on GitHub Actions. Open the
-        <a href="https://github.com/mahmoodalshaikh9-cell/capston_proto/actions/workflows/render.yml" target="_blank" rel="noopener">Render animation workflow</a>,
-        enter a prompt, and the latest result appears here.
+  <main>
+    <header>
+      <span class="badge">Stress-test gallery</span>
+      <h1>Automated Animation Engine</h1>
+      <p>
+        First attempt vs last attempt for each of the five stress tests. Watch a
+        plain-English prompt get turned into a rendered animation, then refined
+        through vision and temporal evaluation on every iteration.
       </p>
-    </div>
+    </header>
 
-    <section class="section hidden" id="results">
-      <h2>&#x1f500; First vs final render</h2>
-      <p class="note" id="resultMeta"></p>
+    <section class="card">
+      <h2>Projectile Motion</h2>
+      <p class="meta">Physics explainer — launch vectors and apex trajectory</p>
       <div class="grid">
         <figure>
-          <video id="first" controls playsinline preload="none" src="demo/first.mp4"></video>
-          <figcaption>First render: <code id="firstLabel">attempt_1</code></figcaption>
+          <video controls playsinline preload="metadata" src="gallery/projectile_motion_3_first.mp4"></video>
+          <figcaption>First attempt <code>attempt_0</code></figcaption>
         </figure>
         <figure>
-          <video id="final" controls playsinline preload="none" src="demo/final.mp4"></video>
-          <figcaption>Final render: <code id="finalLabel">attempt_4</code></figcaption>
+          <video controls playsinline preload="metadata" src="gallery/projectile_motion_3_last.mp4"></video>
+          <figcaption>Last attempt <code>attempt_5</code></figcaption>
         </figure>
       </div>
     </section>
 
-    <section class="section">
-      <a class="button" href="https://github.com/mahmoodalshaikh9-cell/capston_proto" target="_blank" rel="noopener">View source on GitHub</a>
-      <a class="button" href="https://github.com/mahmoodalshaikh9-cell/capston_proto/actions/workflows/render.yml" target="_blank" rel="noopener" style="background:#2ea043;color:#fff;">Generate new animation</a>
+    <section class="card">
+      <h2>Iron Atom (3D)</h2>
+      <p class="meta">Cinematic 3D atom with orbital shells and electrons</p>
+      <div class="grid">
+        <figure>
+          <video controls playsinline preload="metadata" src="gallery/iron_atom_3_first.mp4"></video>
+          <figcaption>First attempt <code>attempt_2</code></figcaption>
+        </figure>
+        <figure>
+          <video controls playsinline preload="metadata" src="gallery/iron_atom_3_last.mp4"></video>
+          <figcaption>Last attempt <code>attempt_4</code></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>K-Means Clustering</h2>
+      <p class="meta">Algorithm visualization — points grouping around centers</p>
+      <div class="grid">
+        <figure>
+          <video controls playsinline preload="metadata" src="gallery/kmeans_3_first.mp4"></video>
+          <figcaption>First attempt <code>attempt_0</code></figcaption>
+        </figure>
+        <figure>
+          <video controls playsinline preload="metadata" src="gallery/kmeans_3_last.mp4"></video>
+          <figcaption>Last attempt <code>attempt_5</code></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>La Espada</h2>
+      <p class="meta">Particle transformation — text dissolving into a sword</p>
+      <div class="grid">
+        <figure>
+          <video controls playsinline preload="metadata" src="gallery/la_espada_3_first.mp4"></video>
+          <figcaption>First attempt <code>attempt_0</code></figcaption>
+        </figure>
+        <figure>
+          <video controls playsinline preload="metadata" src="gallery/la_espada_3_last.mp4"></video>
+          <figcaption>Last attempt <code>attempt_5</code></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Black Hole Spacetime</h2>
+      <p class="meta">Warped spacetime grid with bent light rays</p>
+      <div class="grid">
+        <figure>
+          <video controls playsinline preload="metadata" src="gallery/black_hole_first.mp4"></video>
+          <figcaption>First attempt <code>attempt_3</code></figcaption>
+        </figure>
+        <figure>
+          <video controls playsinline preload="metadata" src="gallery/black_hole_last.mp4"></video>
+          <figcaption>Last attempt <code>attempt_5</code></figcaption>
+        </figure>
+      </div>
     </section>
   </main>
-
-  <script>
-    const results = document.getElementById("results");
-    const promptEl = document.getElementById("prompt");
-
-    function showResults() {
-      results.classList.remove("hidden");
-      results.scrollIntoView({ behavior: "smooth", block: "start" });
-      document.getElementById("first").load();
-      document.getElementById("final").load();
-    }
-
-    document.getElementById("generate").addEventListener("click", showResults);
-
-    fetch("demo/run.json")
-      .then(r => r.json())
-      .then(run => {
-        if (run && run.prompt) promptEl.value = run.prompt;
-        if (run && run.first_attempt) {
-          document.getElementById("firstLabel").textContent = run.first_attempt;
-          document.getElementById("finalLabel").textContent = run.last_attempt;
-          document.getElementById("resultMeta").textContent =
-            "Prompt: \u201c" + run.prompt + "\u201d \u2014 generated " + run.generated_at;
-        }
-        showResults();
-      })
-      .catch(() => {
-        results.classList.remove("hidden");
-      });
-  </script>
 </body>
 </html>
