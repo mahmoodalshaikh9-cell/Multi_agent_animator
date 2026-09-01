@@ -25,44 +25,36 @@ _BOOTSTRAP_CSS = """
 /* ---------- global ---------- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* ---------- palette ---------- */
 :root {
-    --cp-white: #FFFFFF;
-    --cp-charcoal: #242424;
-    --cp-slate: #5C7C89;
-    --cp-teal: #1F4959;
-    --cp-midnight: #011425;
-    --bs-primary: var(--cp-teal);
+    --bs-primary: #6610f2;
     --bs-body-font-family: 'Inter', sans-serif;
 }
 
 html, body, [class*="css"]  {
     font-family: 'Inter', sans-serif;
-    background: var(--cp-midnight);
-    color: var(--cp-white);
 }
 
 /* ---------- header bar ---------- */
 .header-bar {
-    background: linear-gradient(135deg, var(--cp-teal) 0%, var(--cp-charcoal) 100%);
+    background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
     padding: 1.8rem 2rem 1.4rem;
     border-radius: 0 0 1rem 1rem;
     margin: -1rem -1rem 1.5rem -1rem;
-    color: var(--cp-white);
-    border-bottom: 2px solid var(--cp-slate);
+    color: #fff;
 }
-.header-bar h1 { margin: 0; font-weight: 700; font-size: 1.75rem; color: var(--cp-white); }
-.header-bar p  { margin: 0.3rem 0 0; opacity: .85; font-size: .95rem; color: var(--cp-slate); }
+.header-bar h1 { margin: 0; font-weight: 700; font-size: 1.75rem; }
+.header-bar p  { margin: 0.3rem 0 0; opacity: .85; font-size: .95rem; }
 
 /* ---------- cards ---------- */
 .card {
-    background: var(--cp-charcoal);
-    border: 1px solid var(--cp-slate);
+    background: #fff;
+    border: 1px solid #dee2e6;
     border-radius: .75rem;
     padding: 1.25rem 1.5rem;
     margin-bottom: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
+.dark .card { background: #1e1e1e; border-color: #333; }
 
 /* ---------- section labels ---------- */
 .section-label {
@@ -70,55 +62,35 @@ html, body, [class*="css"]  {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .06em;
-    color: var(--cp-slate);
+    color: #6c757d;
     margin-bottom: .5rem;
 }
 
 /* ---------- submit button polish ---------- */
 .stButton > button {
-    background: var(--cp-teal);
-    color: var(--cp-white);
-    border: 1px solid var(--cp-slate);
     border-radius: .5rem;
     font-weight: 600;
-    transition: all .15s ease;
+    transition: transform .1s ease;
 }
-.stButton > button:hover {
-    transform: translateY(-1px);
-    background: var(--cp-slate);
-    border-color: var(--cp-white);
-}
+.stButton > button:hover { transform: translateY(-1px); }
 
 /* ---------- video containers ---------- */
 .video-box {
-    border: 1px solid var(--cp-slate);
+    border: 1px solid #dee2e6;
     border-radius: .75rem;
     overflow: hidden;
     background: #000;
 }
-
-/* ---------- streamlit overrides ---------- */
-.stTextInput > div > div > input,
-.stTextArea > div > div > textarea {
-    background: var(--cp-charcoal) !important;
-    color: var(--cp-white) !important;
-    border: 1px solid var(--cp-slate) !important;
-    border-radius: .5rem !important;
-}
-.stTextInput > div > div > input:focus,
-.stTextArea > div > div > textarea:focus {
-    border-color: var(--cp-teal) !important;
-    box-shadow: 0 0 0 1px var(--cp-teal) !important;
-}
+.dark .video-box { border-color: #333; }
 
 /* ---------- footer ---------- */
 .footer {
     text-align: center;
-    color: var(--cp-slate);
+    color: #6c757d;
     font-size: .8rem;
     margin-top: 2rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--cp-charcoal);
+    border-top: 1px solid #dee2e6;
 }
 </style>
 """
@@ -231,3 +203,31 @@ if submitted:
                     st.markdown(f"**{first_video.parent.name}**")
                     st.video(str(first_video))
                 with cols[1]:
+                    st.markdown(f"**{last_video.parent.name}**")
+                    st.video(str(last_video))
+
+            st.markdown('<div class="section-label">Best Animation</div>', unsafe_allow_html=True)
+            st.video(str(video))
+
+            if frames:
+                st.markdown('<div class="section-label">Vision Frames</div>', unsafe_allow_html=True)
+                cols = st.columns(min(len(frames), 6))
+                for col, frame in zip(cols, frames):
+                    with col:
+                        st.image(
+                            str(frame),
+                            caption=frame.name,
+                            use_container_width=True,
+                        )
+        except Exception as error:
+            logging.exception("Pipeline failed")
+            st.error(f"Pipeline failed: {error}")
+            st.exception(error)
+        finally:
+            _RUN_LOCK.release()
+
+# ---------- footer ----------
+st.markdown(
+    '<div class="footer">Capstone Proto — Manim animation generation pipeline</div>',
+    unsafe_allow_html=True,
+)
