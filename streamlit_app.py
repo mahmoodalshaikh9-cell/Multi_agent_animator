@@ -26,7 +26,7 @@ _BOOTSTRAP_CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --bs-primary: #0d6efd;
+    --bs-primary: #6610f2;
     --bs-body-font-family: 'Inter', sans-serif;
 }
 
@@ -36,7 +36,7 @@ html, body, [class*="css"]  {
 
 /* ---------- header bar ---------- */
 .header-bar {
-    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+    background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
     padding: 1.8rem 2rem 1.4rem;
     border-radius: 0 0 1rem 1rem;
     margin: -1rem -1rem 1.5rem -1rem;
