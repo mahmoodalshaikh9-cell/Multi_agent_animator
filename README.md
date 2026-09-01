@@ -1,8 +1,4 @@
----
-title: Capstone Proto
-sdk: docker
-app_port: 7860
----
 
-# capston_proto
+title: Automated animation engine
+deployed app link : https://multiagentanimator-dmivffbfwfdaacybs66sat.streamlit.app/
 
