@@ -1,11 +1,6 @@
-ffmpeg
-libgl1-mesa-glx
-libglib2.0-0
-libsm6
-libxext6
-libxrender-dev
-libgl1
-libgmp-dev
+pkg-config
+libcairo2-dev
 libpango1.0-dev
-texlive-latex-base
-dvisvgm
+libgirepository1.0-dev
+libglib2.0-dev
+ffmpeg
