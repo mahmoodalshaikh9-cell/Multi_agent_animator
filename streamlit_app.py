@@ -34,12 +34,6 @@ html, body, [class*="css"]  {
     font-family: 'Inter', sans-serif;
 }
 
-/* remove Streamlit's default top padding so the header sits flush */
-.block-container {
-    padding-top: 1rem !important;
-}
-#MainMenu, footer { visibility: hidden; }
-
 /* ---------- header bar ---------- */
 .header-bar {
     background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
