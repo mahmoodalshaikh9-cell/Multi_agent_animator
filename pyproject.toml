@@ -50,3 +50,9 @@ py-modules = [
 
 [tool.ruff]
 line-length = 100
+
+[tool.poetry]
+name = "capstone-proto"
+version = "0.1.0"
+description = "Streamlit UI for the Manim animation generation pipeline"
+package-mode = false
