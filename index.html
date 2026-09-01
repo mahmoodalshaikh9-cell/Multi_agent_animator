@@ -72,6 +72,29 @@
   figcaption code {
     color: #9ecbff;
   }
+  .try {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .try img {
+    width: 160px;
+    height: 160px;
+    padding: 8px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .try-body h2 { margin: 0 0 0.25rem; }
+  .try-body p {
+    margin: 0;
+    line-height: 1.6;
+    color: #9fb0c3;
+  }
+  .try-body a { color: #58a6ff; }
+  @media (max-width: 600px) {
+    .try { flex-direction: column; text-align: center; }
+  }
   video {
     width: 100%;
     border-radius: 8px;
@@ -91,6 +114,17 @@
         through vision and temporal evaluation on every iteration.
       </p>
     </header>
+
+    <section class="card try">
+      <img src="images/qrcode_393910300_e5ae1af349c46534c0191c206e7b77e1.png" alt="Try it now QR code">
+      <div class="try-body">
+        <h2>Try it now</h2>
+        <p>
+          Make your own animation. Scan the QR code with your phone or
+          <a href="https://multiagentanimator-dmivffbfwfdaacybs66sat.streamlit.app/" target="_blank" rel="noopener">open the live app</a>.
+        </p>
+      </div>
+    </section>
 
     <section class="card">
       <h2>Projectile Motion</h2>
