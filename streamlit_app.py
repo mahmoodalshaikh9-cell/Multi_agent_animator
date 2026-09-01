@@ -148,7 +148,6 @@ def first_last_rendered(run_dir: Path):
     )
 
 
-st.set_page_config(page_title="Capstone Proto", page_icon="🎬", layout="wide")
 st.markdown(_BOOTSTRAP_CSS, unsafe_allow_html=True)
 
 # ---------- header ----------
