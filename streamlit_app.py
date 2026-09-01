@@ -148,14 +148,14 @@ def first_last_rendered(run_dir: Path):
     )
 
 
-st.set_page_config(page_title="Capstone Proto", page_icon="🎬", layout="wide")
+st.set_page_config(page_title="Automated animation engine", layout="wide")
 st.markdown(_BOOTSTRAP_CSS, unsafe_allow_html=True)
 
 # ---------- header ----------
 st.markdown(
     """
 <div class="header-bar">
-    <h1>🎬 Capstone Proto</h1>
+    <h1>Automated animation engine</h1>
     <p>Describe an animation in plain English — the pipeline writes Manim code,
        renders, evaluates, and iterates until your prompt is satisfied.</p>
 </div>
