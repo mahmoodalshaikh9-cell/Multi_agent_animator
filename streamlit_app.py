@@ -154,7 +154,8 @@ st.markdown(_BOOTSTRAP_CSS, unsafe_allow_html=True)
 st.markdown(
     """
 <div class="header-bar">
-    <h1>🎬 Capstone Proto</h1>
+    <h1>Automated Animation Engine
+</h1>
     <p>Describe an animation in plain English — the pipeline writes Manim code,
        renders, evaluates, and iterates until your prompt is satisfied.</p>
 </div>
@@ -227,6 +228,6 @@ if submitted:
 
 # ---------- footer ----------
 st.markdown(
-    '<div class="footer">Capstone Proto — Manim animation generation pipeline</div>',
+    '<div class="footer"> Manim animation generation pipeline</div>',
     unsafe_allow_html=True,
 )
