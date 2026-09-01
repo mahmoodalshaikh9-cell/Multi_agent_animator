@@ -12,6 +12,93 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 
 _RUN_LOCK = threading.Lock()
 
+# ---------------------------------------------------------------------------
+# Bootstrap-inspired theming
+# ---------------------------------------------------------------------------
+
+_BOOTSTRAP_CSS = """
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YcnS/1WR6zNmtwFE5yrT1H3Iy3VQI1p6Q1p"
+      crossorigin="anonymous">
+
+<style>
+/* ---------- global ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --bs-primary: #0d6efd;
+    --bs-body-font-family: 'Inter', sans-serif;
+}
+
+html, body, [class*="css"]  {
+    font-family: 'Inter', sans-serif;
+}
+
+/* ---------- header bar ---------- */
+.header-bar {
+    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+    padding: 1.8rem 2rem 1.4rem;
+    border-radius: 0 0 1rem 1rem;
+    margin: -1rem -1rem 1.5rem -1rem;
+    color: #fff;
+}
+.header-bar h1 { margin: 0; font-weight: 700; font-size: 1.75rem; }
+.header-bar p  { margin: 0.3rem 0 0; opacity: .85; font-size: .95rem; }
+
+/* ---------- cards ---------- */
+.card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .75rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.dark .card { background: #1e1e1e; border-color: #333; }
+
+/* ---------- section labels ---------- */
+.section-label {
+    font-size: .8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #6c757d;
+    margin-bottom: .5rem;
+}
+
+/* ---------- submit button polish ---------- */
+.stButton > button {
+    border-radius: .5rem;
+    font-weight: 600;
+    transition: transform .1s ease;
+}
+.stButton > button:hover { transform: translateY(-1px); }
+
+/* ---------- video containers ---------- */
+.video-box {
+    border: 1px solid #dee2e6;
+    border-radius: .75rem;
+    overflow: hidden;
+    background: #000;
+}
+.dark .video-box { border-color: #333; }
+
+/* ---------- footer ---------- */
+.footer {
+    text-align: center;
+    color: #6c757d;
+    font-size: .8rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+</style>
+"""
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
 
 def run_pipeline(prompt: str) -> tuple[Path, list[Path], Path]:
     """Run the full generation pipeline for the user's prompt and return the
@@ -61,21 +148,31 @@ def first_last_rendered(run_dir: Path):
     )
 
 
-st.set_page_config(page_title="Capstone Proto", page_icon="🎬")
-st.title("🎬 Capstone Proto")
-st.caption(
-    "Describe an animation in plain English. The pipeline generates the "
-    "Manim code, renders it, evaluates it, and iterates until your prompt "
-    "is satisfied."
+st.set_page_config(page_title="Capstone Proto", page_icon="🎬", layout="wide")
+st.markdown(_BOOTSTRAP_CSS, unsafe_allow_html=True)
+
+# ---------- header ----------
+st.markdown(
+    """
+<div class="header-bar">
+    <h1>🎬 Capstone Proto</h1>
+    <p>Describe an animation in plain English — the pipeline writes Manim code,
+       renders, evaluates, and iterates until your prompt is satisfied.</p>
+</div>
+""",
+    unsafe_allow_html=True,
 )
 
+# ---------- prompt card ----------
 with st.form("prompt_form"):
+    st.markdown('<div class="section-label">Prompt</div>', unsafe_allow_html=True)
     prompt = st.text_area(
         "Animation prompt",
         height=150,
         placeholder="Create an animation of a blue circle moving from left to right...",
+        label_visibility="collapsed",
     )
-    submitted = st.form_submit_button("Generate", type="primary")
+    submitted = st.form_submit_button("✨  Generate", type="primary", use_container_width=True)
 
 if submitted:
     if not prompt.strip():
@@ -100,20 +197,20 @@ if submitted:
             first_video, last_video = first_last_rendered(run_dir)
 
             if first_video is not None:
-                st.subheader("🔄 First vs final render")
+                st.markdown('<div class="section-label">First vs Final Render</div>', unsafe_allow_html=True)
                 cols = st.columns(2)
                 with cols[0]:
-                    st.caption(f"First render: `{first_video.parent.name}`")
+                    st.markdown(f"**{first_video.parent.name}**")
                     st.video(str(first_video))
                 with cols[1]:
-                    st.caption(f"Final render: `{last_video.parent.name}`")
+                    st.markdown(f"**{last_video.parent.name}**")
                     st.video(str(last_video))
 
-            st.subheader("🎥 Best animation")
+            st.markdown('<div class="section-label">Best Animation</div>', unsafe_allow_html=True)
             st.video(str(video))
 
             if frames:
-                st.subheader("👁️ Vision frames")
+                st.markdown('<div class="section-label">Vision Frames</div>', unsafe_allow_html=True)
                 cols = st.columns(min(len(frames), 6))
                 for col, frame in zip(cols, frames):
                     with col:
@@ -128,3 +225,9 @@ if submitted:
             st.exception(error)
         finally:
             _RUN_LOCK.release()
+
+# ---------- footer ----------
+st.markdown(
+    '<div class="footer">Capstone Proto — Manim animation generation pipeline</div>',
+    unsafe_allow_html=True,
+)
