@@ -100,9 +100,9 @@ html, body, [class*="css"]  {
 # ---------------------------------------------------------------------------
 
 
-def run_pipeline(prompt: str) -> tuple[Path, list[Path], Path]:
+def run_pipeline(prompt: str) -> tuple[Path, Path]:
     """Run the full generation pipeline for the user's prompt and return the
-    best video, its frames, and the run directory."""
+    best video and the run directory."""
     out_root = Path(__file__).parent / "baseline_runs" / "streamlit_ui"
     slug = f"ui_{int(time.time())}"
 
@@ -125,9 +125,7 @@ def run_pipeline(prompt: str) -> tuple[Path, list[Path], Path]:
     if not videos:
         raise RuntimeError("Best attempt produced no video.")
 
-    frames = sorted(attempt_dir.glob("frames/frame_*.jpg"))
-
-    return videos[0], frames, out
+    return videos[0], out
 
 
 def first_last_rendered(run_dir: Path):
@@ -190,7 +188,7 @@ if submitted:
                     "This can take several minutes."
                 )
                 logging.info("Starting run: %s", prompt.strip())
-                video, frames, run_dir = run_pipeline(prompt)
+                video, run_dir = run_pipeline(prompt)
                 logging.info("Run complete: %s", run_dir.name)
                 status.update(label="Pipeline complete", state="complete")
 
@@ -208,17 +206,6 @@ if submitted:
 
             st.markdown('<div class="section-label">Best Animation</div>', unsafe_allow_html=True)
             st.video(str(video))
-
-            if frames:
-                st.markdown('<div class="section-label">Vision Frames</div>', unsafe_allow_html=True)
-                cols = st.columns(min(len(frames), 6))
-                for col, frame in zip(cols, frames):
-                    with col:
-                        st.image(
-                            str(frame),
-                            caption=frame.name,
-                            use_container_width=True,
-                        )
         except Exception as error:
             logging.exception("Pipeline failed")
             st.error(f"Pipeline failed: {error}")
