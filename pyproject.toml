@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "Automated Animation Engine
+name = "Automated-Animation-Engine
 "
 version = "0.1.0"
 description = "Streamlit UI for the Manim animation generation pipeline"
